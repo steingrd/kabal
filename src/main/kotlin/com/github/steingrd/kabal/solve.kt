@@ -4,9 +4,9 @@ import com.github.steingrd.kabal.TrekkType.*
 import kotlin.math.min
 
 private val trekkKjørere = mapOf<TrekkType, (Kabal, Trekk)->Kabal>(
-        TIL_MÅL to ::tilMålFraSpor,
-        TIL_SPOR to ::tilSpor,
-        SNU_KORT to ::snuKort,
+        FRA_SPOR_TIL_MÅL to ::fraSporTilMål,
+        FRA_SPOR_TIL_SPOR to ::fraSporTilSpor,
+        SNU_KORT_I_SPOR to ::snuKortISpor,
         SNU_BUNKE to ::snuBunke,
         TREKK_BUNKE to ::trekkBunke,
         FRA_BUNKE_TIL_SPOR to ::fraBunkeTilSpor,
@@ -55,7 +55,7 @@ private fun trekkBunke(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(kabal.mål, bunke, kabal.spor)
 }
 
-private fun tilSpor(kabal: Kabal, trekk: Trekk): Kabal {
+private fun fraSporTilSpor(kabal: Kabal, trekk: Trekk): Kabal {
     val spor = listOf(
             leggPåEllerFlyttKortIToppForTrekk(kabal, trekk, 0),
             leggPåEllerFlyttKortIToppForTrekk(kabal, trekk, 1),
@@ -68,7 +68,7 @@ private fun tilSpor(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(kabal.mål, kabal.bunke, spor)
 }
 
-private fun tilMålFraSpor(kabal: Kabal, trekk: Trekk): Kabal {
+private fun fraSporTilMål(kabal: Kabal, trekk: Trekk): Kabal {
     val kort = kabal.spor[trekk.source].topp.last()
     val mål = kabal.mål.motta(kort)
 
@@ -84,7 +84,7 @@ private fun tilMålFraSpor(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(mål, kabal.bunke, spor)
 }
 
-private fun snuKort(kabal: Kabal, trekk: Trekk): Kabal {
+private fun snuKortISpor(kabal: Kabal, trekk: Trekk): Kabal {
     assert(kabal.spor[trekk.source].topp.isEmpty())
     assert(kabal.spor[trekk.source].bunn.isNotEmpty())
 

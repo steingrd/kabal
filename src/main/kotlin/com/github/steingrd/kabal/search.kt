@@ -50,7 +50,7 @@ private fun finnFraBunkeTilSporTrekk(kabal: Kabal): List<Trekk> {
 private fun finnSnuKortTrekk(kabal: Kabal): List<Trekk> {
     return kabal.spor.mapIndexed { sporIndex, spor ->
         if (spor.topp.isEmpty() && spor.bunn.isNotEmpty()) {
-            Trekk(TrekkType.SNU_KORT, sporIndex, -1)
+            Trekk(TrekkType.SNU_KORT_I_SPOR, sporIndex, -1)
         } else Trekk.NULL_TREKK
     }.filter(::erNullTrekk)
 }
@@ -63,7 +63,7 @@ private fun finnFraSporTilSporTrekk(kabal: Kabal): List<Trekk> {
                     && tilSpor.kanMotta(fraSpor.topp.first())
                     // spesialcase så vi ikke flytter konge frem og tilbake mellom to spor
                     && !(fraSpor.bunn.isEmpty() && fraSpor.topp.first().verdi == 13)) {
-                Trekk(TrekkType.TIL_SPOR, fraSporIndex, tilSporIndex)
+                Trekk(TrekkType.FRA_SPOR_TIL_SPOR, fraSporIndex, tilSporIndex)
             } else {
                 nullTrekk()
             }
@@ -75,7 +75,7 @@ private fun finnFraSporTilMålTrekk(kabal: Kabal): List<Trekk> {
     return kabal.spor.mapIndexed { sporIndeks, spor ->
         when {
             spor.topp.isNotEmpty() && kabal.mål.kanMotta(spor.topp.last()) ->
-                listOf(Trekk(TrekkType.TIL_MÅL, sporIndeks, -1))
+                listOf(Trekk(TrekkType.FRA_SPOR_TIL_MÅL, sporIndeks, -1))
             else ->
                 listOf(nullTrekk())
         }.filter(::erNullTrekk)

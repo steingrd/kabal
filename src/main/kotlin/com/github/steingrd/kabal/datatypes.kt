@@ -124,9 +124,9 @@ class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
 
 enum class TrekkType {
     NULL_TREKK,
-    TIL_MÅL,                // source: spor#    dest: målSpor#
-    TIL_SPOR,               // source: spor#    dest: spor#
-    SNU_KORT,               // source: spor#    dest:
+    FRA_SPOR_TIL_MÅL,                // source: spor#    dest: målSpor#
+    FRA_SPOR_TIL_SPOR,               // source: spor#    dest: spor#
+    SNU_KORT_I_SPOR,               // source: spor#    dest:
     FRA_BUNKE_TIL_SPOR,    // source:          dest: spor#
     FRA_BUNKE_TIL_MÅL,      // source:         dest: målSpor#
     TREKK_BUNKE,            // source:         dest:
