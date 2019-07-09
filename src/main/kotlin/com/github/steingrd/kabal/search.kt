@@ -12,7 +12,7 @@ fun finnTrekk(kabal: Kabal): List<Trekk> {
     return when {
         trekk.isEmpty() && kabal.bunke.usynlig.isNotEmpty() ->
             listOf(Trekk(TrekkType.TREKK_BUNKE, -1, -1))
-        trekk.isEmpty() && kabal.bunke.usynlig.isEmpty() && !kabal.bunke.urørt ->
+        trekk.isEmpty() && kabal.bunke.usynlig.isEmpty() && kabal.bunke.synlig.isNotEmpty() && !kabal.bunke.urørt ->
             listOf(Trekk(TrekkType.SNU_BUNKE, -1, -1))
         else ->
             trekk
