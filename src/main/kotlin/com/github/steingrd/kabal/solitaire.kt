@@ -27,13 +27,13 @@ fun main(args: Array<String>) {
 
 fun delUt(): Kabal {
     val stokk = Kortstokk.alleKort.shuffled()
-    val (stokk1, spor1) = lagSpor(stokk, 0)
-    val (stokk2, spor2) = lagSpor(stokk1, 1)
-    val (stokk3, spor3) = lagSpor(stokk2, 2)
-    val (stokk4, spor4) = lagSpor(stokk3, 3)
-    val (stokk5, spor5) = lagSpor(stokk4, 4)
-    val (stokk6, spor6) = lagSpor(stokk5, 5)
-    val (stokkRest, spor7) = lagSpor(stokk6, 6)
+    val (stokk1, spor0) = lagSpor(stokk, 0)
+    val (stokk2, spor1) = lagSpor(stokk1, 1)
+    val (stokk3, spor2) = lagSpor(stokk2, 2)
+    val (stokk4, spor3) = lagSpor(stokk3, 3)
+    val (stokk5, spor4) = lagSpor(stokk4, 4)
+    val (stokk6, spor5) = lagSpor(stokk5, 5)
+    val (stokkRest, spor6) = lagSpor(stokk6, 6)
 
     val målSpor = mapOf(
             HJERTER to MålSpor(HJERTER, emptyList()),
@@ -41,9 +41,15 @@ fun delUt(): Kabal {
             RUTER to MålSpor(RUTER, emptyList()),
             SPAR to MålSpor(SPAR, emptyList()))
 
-    val spor = listOf(spor1, spor2, spor3, spor4, spor5, spor6, spor7)
-
-    return Kabal(Mål(målSpor), Bunke(emptyList(), stokkRest, true), spor)
+    return Kabal(Mål(målSpor), Bunke(emptyList(), stokkRest, true), SporListe(mapOf(
+            0 to spor0,
+            1 to spor1,
+            2 to spor2,
+            3 to spor3,
+            4 to spor4,
+            5 to spor5,
+            6 to spor6
+    )))
 }
 
 fun lagSpor(stokk: List<Kort>, antallBunn: Int): Pair<List<Kort>, Spor> {

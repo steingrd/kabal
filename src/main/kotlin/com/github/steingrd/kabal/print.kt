@@ -29,7 +29,7 @@ fun skrivUt(kabal: Kabal) {
     println()
 
     val linjer = mutableListOf<StringBuilder>()
-    kabal.spor.forEach { skrivUtSpor(linjer, it) }
+    kabal.spor.liste.keys.sorted().forEach { skrivUtSpor(linjer, kabal.spor.liste[it] ?: error("Ugyldig index $it")) }
     linjer.forEach(::println)
 
     println()

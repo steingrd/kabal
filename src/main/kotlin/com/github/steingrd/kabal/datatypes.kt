@@ -1,5 +1,7 @@
 package com.github.steingrd.kabal
 
+import kotlin.math.min
+
 
 enum class Farge {
     HJERTER,
@@ -87,16 +89,18 @@ class Kort(val farge: Farge, val verdi: Int) {
 
 }
 
-class Kabal(val mål: Mål, val bunke: Bunke, val spor: List<Spor>)
+class Kabal(val mål: Mål, val bunke: Bunke, val spor: SporListe)
 
 class Mål(val målSpor: Map<Farge, MålSpor>) {
 
     fun kanMotta(k: Kort): Boolean = målSpor.values.any { it.kanMotta(k) }
 
-    fun motta(k: Kort): Mål {
-        val sporetSomMottar = målSpor[k.farge] ?: error("Ugyldig farge ${k.farge}")
-        return Mål(målSpor.filterKeys { f -> f != k.farge }.plus(k.farge to sporetSomMottar.motta(k)))
+    fun motta(kort: Kort): Mål {
+        val sporetSomMottar = målSpor[kort.farge] ?: error("Ugyldig farge ${kort.farge}")
+        return Mål(målSpor.filterKeys { f -> f != kort.farge }.plus(kort.farge to sporetSomMottar.motta(kort)))
     }
+
+    fun motta(bunke: Bunke): Mål = motta(bunke.synlig.last())
 }
 
 class MålSpor(val farge: Farge, val kort: List<Kort>) {
@@ -108,9 +112,62 @@ class MålSpor(val farge: Farge, val kort: List<Kort>) {
     fun motta(k: Kort): MålSpor = MålSpor(farge, kort.plus(k))
 }
 
-class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean)
+class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean) {
+
+    fun trekkTreKort(): Bunke {
+        val treKort = usynlig.takeLast(min(3, usynlig.size))
+        val usynligEtterAtTreKortErTatt = usynlig.dropLast(3)
+        return Bunke(synlig.plus(treKort), usynligEtterAtTreKortErTatt, urørt)
+    }
+
+    fun snu(): Bunke = Bunke(emptyList(), synlig.reversed(), true)
+
+    fun øversteKort(): Kort = synlig.last()
+
+    fun taØversteKort(): Bunke = Bunke(synlig.dropLast(1), usynlig, false)
+
+}
+
+class SporListe(val liste: Map<Int, Spor>) {
+
+    fun motta(kort: Kort, tilIndex: Int): SporListe = motta(listOf(kort), tilIndex)
+
+    fun motta(kort: List<Kort>, tilIndex: Int): SporListe {
+        val sporetSomMottar = liste[tilIndex] ?: error("Ugyldig index $tilIndex")
+        return SporListe(liste.filterKeys { i ->  i != tilIndex }.plus(tilIndex to sporetSomMottar.motta(kort)))
+    }
+
+    fun flyttTopp(fraIndex: Int, tilIndex: Int): SporListe {
+        val sporetSomMottar = liste[tilIndex] ?: error("Ugyldig index $tilIndex")
+        val sporetSomFlyttesFra = liste[fraIndex] ?: error("Ugyldig index $fraIndex")
+        val kort = sporetSomFlyttesFra.topp
+
+        return SporListe(liste.filterKeys { i -> i != fraIndex && i != tilIndex }
+                .plus(fraIndex to sporetSomFlyttesFra.flyttTopp())
+                .plus(tilIndex to sporetSomMottar.motta(kort)))
+    }
+
+    fun snuKortISpor(sporIndex: Int): SporListe {
+        val sporetSomSkalSnus = liste[sporIndex] ?: error("Ugyldig index $sporIndex")
+        return SporListe(liste.filterKeys { i -> i != sporIndex }.plus(sporIndex to sporetSomSkalSnus.snuØverste()))
+    }
+
+    fun nedersteITopp(sporIndex: Int): Kort {
+        val spor = liste[sporIndex] ?: error("Ugyldig index $sporIndex")
+        assert(spor.topp.isNotEmpty())
+        return spor.topp.last()
+    }
+
+    fun fjernNedersteITopp(sporIndex: Int): SporListe {
+        val spor = liste[sporIndex] ?: error("Ugyldig index $sporIndex")
+        return SporListe(liste.filterKeys { i -> i != sporIndex }.plus(sporIndex to spor.fjernNedersteITopp()))
+    }
+
+}
 
 class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
+    fun kanMotta(kort: List<Kort>): Boolean = kanMotta(kort[0])
+
     fun kanMotta(kort: Kort): Boolean {
         return if (bunn.isEmpty() && topp.isEmpty()) {
             kort.verdi == 13
@@ -119,6 +176,26 @@ class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
         } else {
             false
         }
+    }
+
+    fun kanSnus(): Boolean = topp.isEmpty() && bunn.isNotEmpty()
+
+    fun motta(kort: Kort): Spor = Spor(bunn, topp.plus(kort))
+
+    fun motta(kort: List<Kort>): Spor = Spor(bunn, topp.plus(kort))
+
+    fun flyttTopp(): Spor = Spor(bunn, emptyList())
+
+    fun snuØverste(): Spor {
+        assert(topp.isEmpty())
+        assert(bunn.isNotEmpty())
+        val kort = bunn.last()
+        return Spor(bunn.dropLast(1), listOf(kort))
+    }
+
+    fun fjernNedersteITopp(): Spor {
+        assert(topp.isNotEmpty())
+        return Spor(bunn, topp.dropLast(1))
     }
 }
 
