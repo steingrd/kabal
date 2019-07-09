@@ -2,10 +2,11 @@ package com.github.steingrd.kabal
 
 fun finnTrekk(kabal: Kabal): List<Trekk> {
     val trekk = listOf(
-            finnTilMålTrekk(kabal),
-            finnTilSporTrekk(kabal),
+            finnFraSporTilMålTrekk(kabal),
+            finnFraBunkeTilMålTrekk(kabal),
+            finnFraSporTilSporTrekk(kabal),
             finnSnuKortTrekk(kabal),
-            finnFraBunkeTrekk(kabal)
+            finnFraBunkeTilSporTrekk(kabal)
     ).flatten()
 
     return when {
@@ -22,7 +23,21 @@ private fun nullTrekk() = Trekk.NULL_TREKK
 
 private fun erNullTrekk(it: Trekk) = it != Trekk.NULL_TREKK
 
-private fun finnFraBunkeTrekk(kabal: Kabal): List<Trekk> {
+private fun finnFraBunkeTilMålTrekk(kabal: Kabal): List<Trekk> {
+    return if (kabal.bunke.synlig.isEmpty()) {
+        emptyList()
+    } else {
+        kabal.mål.mapIndexed { målIndex, mål ->
+            when {
+                mål.kanMotta(kabal.bunke.synlig.last()) ->
+                    Trekk(TrekkType.FRA_BUNKE_TIL_MÅL, 0, målIndex)
+                else -> nullTrekk()
+            }
+        }.filter(::erNullTrekk)
+    }
+}
+
+private fun finnFraBunkeTilSporTrekk(kabal: Kabal): List<Trekk> {
     if (kabal.bunke.synlig.isEmpty()) return emptyList()
 
     return kabal.spor.mapIndexed { tilSporIndex, tilSpor ->
@@ -41,7 +56,7 @@ private fun finnSnuKortTrekk(kabal: Kabal): List<Trekk> {
     }.filter(::erNullTrekk)
 }
 
-private fun finnTilSporTrekk(kabal: Kabal): List<Trekk> {
+private fun finnFraSporTilSporTrekk(kabal: Kabal): List<Trekk> {
     return kabal.spor.mapIndexed { tilSporIndex, tilSpor ->
         kabal.spor.mapIndexed { fraSporIndex, fraSpor ->
             if (fraSpor.topp.isNotEmpty()
@@ -57,11 +72,11 @@ private fun finnTilSporTrekk(kabal: Kabal): List<Trekk> {
     }.flatten().filter(::erNullTrekk)
 }
 
-private fun finnTilMålTrekk(kabal: Kabal): List<Trekk> {
+private fun finnFraSporTilMålTrekk(kabal: Kabal): List<Trekk> {
     return kabal.spor.mapIndexed { sporIndeks, spor ->
         kabal.mål.mapIndexed { målIndex, mål ->
             when {
-                spor.topp.isNotEmpty() && mål.kanLeggesPå(spor.topp.last())
+                spor.topp.isNotEmpty() && mål.kanMotta(spor.topp.last())
                 -> Trekk(TrekkType.TIL_MÅL, source = sporIndeks, dest = målIndex)
                 else
                 -> nullTrekk()

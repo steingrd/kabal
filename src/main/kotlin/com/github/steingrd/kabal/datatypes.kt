@@ -90,10 +90,15 @@ class Kort(val farge: Farge, val verdi: Int) {
 class Kabal(val mål: List<Mål>, val bunke: Bunke, val spor: List<Spor>)
 
 class Mål(val farge: Farge, val kort: List<Kort>) {
-    fun kanLeggesPå(k: Kort): Boolean =
+    fun kanMotta(k: Kort): Boolean =
             farge == k.farge
                     && ((kort.isEmpty() && k.verdi == 1)
                     || kort.isNotEmpty() && k.verdi == kort.last().verdi + 1)
+
+    fun motta(k: Kort): Mål {
+        assert(kanMotta(k))
+        return Mål(farge, kort.plus(k))
+    }
 }
 
 class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean)
