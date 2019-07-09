@@ -13,13 +13,21 @@ fun main(args: Array<String>) {
     var n = 0;
 
     while (trekk.isNotEmpty()) {
-        println("$n: ${trekk[0]}")
-        kabal = kjørTrekk(kabal,trekk[0])
-        skrivUt(kabal)
+        if (trekk.isNotEmpty()) {
+            println("$n: ${trekk[0]}")
+            kabal = kjørTrekk(kabal, trekk[0])
+            skrivUt(kabal)
 
-        trekk = finnTrekk(kabal)
+            trekk = finnTrekk(kabal)
 
-        n++;
+            n++;
+        }
+    }
+
+    if (kabal.erFerdig()) {
+        println("+-------------------+")
+        println("| Kabalen gikk opp! |")
+        println("+-------------------+")
     }
 
     skrivUt(kabal)

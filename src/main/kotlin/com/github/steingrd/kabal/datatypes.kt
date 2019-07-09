@@ -89,7 +89,9 @@ class Kort(val farge: Farge, val verdi: Int) {
 
 }
 
-class Kabal(val mål: Mål, val bunke: Bunke, val spor: SporListe)
+class Kabal(val mål: Mål, val bunke: Bunke, val spor: SporListe) {
+    fun erFerdig(): Boolean = mål.erFerdig()
+}
 
 class Mål(val målSpor: Map<Farge, MålSpor>) {
 
@@ -101,6 +103,8 @@ class Mål(val målSpor: Map<Farge, MålSpor>) {
     }
 
     fun motta(bunke: Bunke): Mål = motta(bunke.synlig.last())
+
+    fun erFerdig(): Boolean = målSpor.all { e -> e.value.kort.size == 13}
 }
 
 class MålSpor(val farge: Farge, val kort: List<Kort>) {
