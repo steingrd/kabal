@@ -87,18 +87,25 @@ class Kort(val farge: Farge, val verdi: Int) {
 
 }
 
-class Kabal(val mål: List<Mål>, val bunke: Bunke, val spor: List<Spor>)
+class Kabal(val mål: Mål, val bunke: Bunke, val spor: List<Spor>)
 
-class Mål(val farge: Farge, val kort: List<Kort>) {
+class Mål(val målSpor: Map<Farge, MålSpor>) {
+
+    fun kanMotta(k: Kort): Boolean = målSpor.values.any { it.kanMotta(k) }
+
+    fun motta(k: Kort): Mål {
+        val sporetSomMottar = målSpor[k.farge] ?: error("Ugyldig farge ${k.farge}")
+        return Mål(målSpor.filterKeys { f -> f != k.farge }.plus(k.farge to sporetSomMottar.motta(k)))
+    }
+}
+
+class MålSpor(val farge: Farge, val kort: List<Kort>) {
     fun kanMotta(k: Kort): Boolean =
             farge == k.farge
                     && ((kort.isEmpty() && k.verdi == 1)
                     || kort.isNotEmpty() && k.verdi == kort.last().verdi + 1)
 
-    fun motta(k: Kort): Mål {
-        assert(kanMotta(k))
-        return Mål(farge, kort.plus(k))
-    }
+    fun motta(k: Kort): MålSpor = MålSpor(farge, kort.plus(k))
 }
 
 class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean)
@@ -117,11 +124,11 @@ class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
 
 enum class TrekkType {
     NULL_TREKK,
-    TIL_MÅL,                // source: spor#    dest: mål#
+    TIL_MÅL,                // source: spor#    dest: målSpor#
     TIL_SPOR,               // source: spor#    dest: spor#
     SNU_KORT,               // source: spor#    dest:
     FRA_BUNKE_TIL_SPOR,    // source:          dest: spor#
-    FRA_BUNKE_TIL_MÅL,      // source:         dest: mål#
+    FRA_BUNKE_TIL_MÅL,      // source:         dest: målSpor#
     TREKK_BUNKE,            // source:         dest:
     SNU_BUNKE               // source:         dest:
 }

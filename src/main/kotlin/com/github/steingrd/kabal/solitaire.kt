@@ -4,8 +4,8 @@ import com.github.steingrd.kabal.Farge.*
 
 fun main(args: Array<String>) {
     var kabal = delUt()
-    //var kabal = lesFraDisk()
     skrivTilDisk(kabal)
+    //var kabal = lesFraDisk()
 
     skrivUt(kabal)
 
@@ -35,10 +35,15 @@ fun delUt(): Kabal {
     val (stokk6, spor6) = lagSpor(stokk5, 5)
     val (stokkRest, spor7) = lagSpor(stokk6, 6)
 
-    val løsninger = listOf(Mål(HJERTER, emptyList()), Mål(KLØVER, emptyList()), Mål(RUTER, emptyList()), Mål(SPAR, emptyList()))
+    val målSpor = mapOf(
+            HJERTER to MålSpor(HJERTER, emptyList()),
+            KLØVER to MålSpor(KLØVER, emptyList()),
+            RUTER to MålSpor(RUTER, emptyList()),
+            SPAR to MålSpor(SPAR, emptyList()))
+
     val spor = listOf(spor1, spor2, spor3, spor4, spor5, spor6, spor7)
 
-    return Kabal(løsninger, Bunke(emptyList(), stokkRest, true), spor)
+    return Kabal(Mål(målSpor), Bunke(emptyList(), stokkRest, true), spor)
 }
 
 fun lagSpor(stokk: List<Kort>, antallBunn: Int): Pair<List<Kort>, Spor> {

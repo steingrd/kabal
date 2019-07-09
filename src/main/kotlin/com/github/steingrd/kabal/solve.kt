@@ -4,7 +4,7 @@ import com.github.steingrd.kabal.TrekkType.*
 import kotlin.math.min
 
 private val trekkKjørere = mapOf<TrekkType, (Kabal, Trekk)->Kabal>(
-        TIL_MÅL to ::tilMål,
+        TIL_MÅL to ::tilMålFraSpor,
         TIL_SPOR to ::tilSpor,
         SNU_KORT to ::snuKort,
         SNU_BUNKE to ::snuBunke,
@@ -26,15 +26,9 @@ private fun snuBunke(kabal: Kabal, trekk: Trekk): Kabal {
 private fun fraBunkeTilMål(kabal: Kabal, trekk: Trekk): Kabal {
     val kort = kabal.bunke.synlig.last()
 
-    val mål = listOf(
-            leggPåKortFraBunkeTilMålForTrekk(kabal, trekk, 0),
-            leggPåKortFraBunkeTilMålForTrekk(kabal, trekk, 1),
-            leggPåKortFraBunkeTilMålForTrekk(kabal, trekk, 2),
-            leggPåKortFraBunkeTilMålForTrekk(kabal, trekk, 3))
-
     val bunke = Bunke(kabal.bunke.synlig.dropLast(1), kabal.bunke.usynlig, false)
 
-    return Kabal(mål, bunke, kabal.spor)
+    return Kabal(kabal.mål.motta(kort), bunke, kabal.spor)
 }
 
 private fun fraBunkeTilSpor(kabal: Kabal, trekk: Trekk): Kabal {
@@ -74,12 +68,9 @@ private fun tilSpor(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(kabal.mål, kabal.bunke, spor)
 }
 
-private fun tilMål(kabal: Kabal, trekk: Trekk): Kabal {
-    val mål = listOf(
-            leggPåKortFraSporTilMålForTrekk(kabal, trekk, 0),
-            leggPåKortFraSporTilMålForTrekk(kabal, trekk, 1),
-            leggPåKortFraSporTilMålForTrekk(kabal, trekk, 2),
-            leggPåKortFraSporTilMålForTrekk(kabal, trekk, 3))
+private fun tilMålFraSpor(kabal: Kabal, trekk: Trekk): Kabal {
+    val kort = kabal.spor[trekk.source].topp.last()
+    val mål = kabal.mål.motta(kort)
 
     val spor = listOf(
             fjernKortIToppForTrekk(kabal, trekk, 0),
@@ -130,29 +121,6 @@ private fun leggPåEllerFlyttKortIToppForTrekk(kabal: Kabal, trekk: Trekk, sporI
             Spor(spor.bunn, spor.topp.plus(flyttes))
         }
         else -> spor
-    }
-}
-
-
-private fun leggPåKortFraBunkeTilMålForTrekk(kabal: Kabal, trekk: Trekk, målIndex: Int): Mål {
-    val mål = kabal.mål[målIndex]
-
-    return if (trekk.dest == målIndex) {
-        val kort = kabal.bunke.synlig.last()
-        mål.motta(kort)
-    } else {
-        mål
-    }
-}
-
-private fun leggPåKortFraSporTilMålForTrekk(kabal: Kabal, trekk: Trekk, målIndex: Int): Mål {
-    val mål = kabal.mål[målIndex]
-
-    return if (trekk.dest == målIndex) {
-        val kort = kabal.spor[trekk.source].topp.last()
-        Mål(mål.farge, mål.kort.plus(kort))
-    } else {
-        mål
     }
 }
 

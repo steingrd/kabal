@@ -27,14 +27,13 @@ private fun finnFraBunkeTilMålTrekk(kabal: Kabal): List<Trekk> {
     return if (kabal.bunke.synlig.isEmpty()) {
         emptyList()
     } else {
-        kabal.mål.mapIndexed { målIndex, mål ->
-            when {
-                mål.kanMotta(kabal.bunke.synlig.last()) ->
-                    Trekk(TrekkType.FRA_BUNKE_TIL_MÅL, 0, målIndex)
-                else -> nullTrekk()
-            }
-        }.filter(::erNullTrekk)
-    }
+        when {
+            kabal.mål.kanMotta(kabal.bunke.synlig.last()) ->
+                listOf(Trekk(TrekkType.FRA_BUNKE_TIL_MÅL, -1, -1))
+            else ->
+                listOf(nullTrekk())
+        }
+    }.filter(::erNullTrekk)
 }
 
 private fun finnFraBunkeTilSporTrekk(kabal: Kabal): List<Trekk> {
@@ -74,14 +73,11 @@ private fun finnFraSporTilSporTrekk(kabal: Kabal): List<Trekk> {
 
 private fun finnFraSporTilMålTrekk(kabal: Kabal): List<Trekk> {
     return kabal.spor.mapIndexed { sporIndeks, spor ->
-        kabal.mål.mapIndexed { målIndex, mål ->
-            when {
-                spor.topp.isNotEmpty() && mål.kanMotta(spor.topp.last())
-                -> Trekk(TrekkType.TIL_MÅL, source = sporIndeks, dest = målIndex)
-                else
-                -> nullTrekk()
-            }
-        }.filter((::erNullTrekk))
-
+        when {
+            spor.topp.isNotEmpty() && kabal.mål.kanMotta(spor.topp.last()) ->
+                listOf(Trekk(TrekkType.TIL_MÅL, sporIndeks, -1))
+            else ->
+                listOf(nullTrekk())
+        }.filter(::erNullTrekk)
     }.flatten()
 }

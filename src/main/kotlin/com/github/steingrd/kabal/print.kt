@@ -24,7 +24,7 @@ fun skrivUt(kabal: Kabal) {
     println("Bunke: " + (if (kabal.bunke.synlig.isEmpty()) "[-----]" else kabal.bunke.synlig.last()) + " " + kabal.bunke.usynlig.size + " urørt: " + kabal.bunke.urørt)
     println()
 
-    kabal.mål.map { l -> if (l.kort.isEmpty()) "------- " else l.kort.last().toString() + " " }.forEach(::print)
+    kabal.mål.målSpor.values.map { l -> if (l.kort.isEmpty()) "------- " else l.kort.last().toString() + " " }.forEach(::print)
     println()
     println()
 
