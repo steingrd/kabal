@@ -43,18 +43,16 @@ private fun finnSnuKortTrekk(kabal: Kabal): List<Trekk> {
 
 private fun finnTilSporTrekk(kabal: Kabal): List<Trekk> {
     return kabal.spor.mapIndexed { tilSporIndex, tilSpor ->
-        if (tilSpor.topp.isNotEmpty()) {
-            kabal.spor.mapIndexed { fraSporIndex, fraSpor ->
-                if (fraSpor.topp.isNotEmpty()
-                        && fraSporIndex != tilSporIndex
-                        && tilSpor.kanMotta(fraSpor.topp.first())) {
-                    Trekk(TrekkType.TIL_SPOR, fraSporIndex, tilSporIndex)
-                } else {
-                    nullTrekk()
-                }
-            }.filter(::erNullTrekk)
-        } else {
-            listOf(nullTrekk())
+        kabal.spor.mapIndexed { fraSporIndex, fraSpor ->
+            if (fraSpor.topp.isNotEmpty()
+                    && fraSporIndex != tilSporIndex
+                    && tilSpor.kanMotta(fraSpor.topp.first())
+                    // spesialcase så vi ikke flytter konge frem og tilbake mellom to spor
+                    && !(fraSpor.bunn.isEmpty() && fraSpor.topp.first().verdi == 13)) {
+                Trekk(TrekkType.TIL_SPOR, fraSporIndex, tilSporIndex)
+            } else {
+                nullTrekk()
+            }
         }
     }.flatten().filter(::erNullTrekk)
 }
