@@ -7,7 +7,7 @@ fun finnTrekk(kabal: Kabal): List<Trekk> {
             finnFraSporTilSporTrekk(kabal),
             finnSnuKortTrekk(kabal),
             finnFraBunkeTilSporTrekk(kabal)
-    ).flatten()
+    ).flatten().filter(::erNullTrekk)
 
     return when {
         trekk.isEmpty() && kabal.bunke.usynlig.isNotEmpty() ->
@@ -33,7 +33,7 @@ private fun finnFraBunkeTilMålTrekk(kabal: Kabal): List<Trekk> {
             else ->
                 listOf(nullTrekk())
         }
-    }.filter(::erNullTrekk)
+    }
 }
 
 private fun finnFraBunkeTilSporTrekk(kabal: Kabal): List<Trekk> {
@@ -46,7 +46,7 @@ private fun finnFraBunkeTilSporTrekk(kabal: Kabal): List<Trekk> {
         } else {
             nullTrekk()
         }
-    }.filter(::erNullTrekk)
+    }
 }
 
 private fun finnSnuKortTrekk(kabal: Kabal): List<Trekk> {
@@ -57,7 +57,7 @@ private fun finnSnuKortTrekk(kabal: Kabal): List<Trekk> {
         } else {
             nullTrekk()
         }
-    }.filter(::erNullTrekk)
+    }
 }
 
 private fun finnFraSporTilSporTrekk(kabal: Kabal): List<Trekk> {
@@ -77,7 +77,7 @@ private fun finnFraSporTilSporTrekk(kabal: Kabal): List<Trekk> {
                 nullTrekk()
             }
         }
-    }.flatten().filter(::erNullTrekk)
+    }.flatten()
 }
 
 private fun finnFraSporTilMålTrekk(kabal: Kabal): List<Trekk> {
@@ -88,5 +88,5 @@ private fun finnFraSporTilMålTrekk(kabal: Kabal): List<Trekk> {
         } else {
             nullTrekk()
         }
-    }.filter(::erNullTrekk)
+    }
 }
