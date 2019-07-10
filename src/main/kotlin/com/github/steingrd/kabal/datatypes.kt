@@ -102,7 +102,7 @@ class Mål(val målSpor: Map<Farge, MålSpor>) {
         return Mål(målSpor.filterKeys { f -> f != kort.farge }.plus(kort.farge to sporetSomMottar.motta(kort)))
     }
 
-    fun motta(bunke: Bunke): Mål = motta(bunke.synlig.last())
+    fun motta(bunke: Bunke): Mål = motta(bunke.øversteKort())
 
     fun erFerdig(): Boolean = målSpor.all { e -> e.value.kort.size == 13}
 }
@@ -116,7 +116,7 @@ class MålSpor(val farge: Farge, val kort: List<Kort>) {
     fun motta(k: Kort): MålSpor = MålSpor(farge, kort.plus(k))
 }
 
-class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean) {
+class Bunke(private val synlig: List<Kort>, private val usynlig: List<Kort>, val urørt: Boolean) {
 
     fun trekkTreKort(): Bunke {
         val treKort = usynlig.takeLast(min(3, usynlig.size))
@@ -124,11 +124,21 @@ class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean
         return Bunke(synlig.plus(treKort), usynligEtterAtTreKortErTatt, urørt)
     }
 
+    fun kanTrekkes(): Boolean = usynlig.isNotEmpty()
+
+    fun kanSnus(): Boolean = usynlig.isEmpty() && synlig.isNotEmpty()
+
     fun snu(): Bunke = Bunke(emptyList(), synlig.reversed(), true)
 
     fun øversteKort(): Kort = synlig.last()
 
     fun taØversteKort(): Bunke = Bunke(synlig.dropLast(1), usynlig, false)
+
+    fun harSynligeKort(): Boolean = synlig.isNotEmpty()
+
+    override fun toString(): String {
+        return (if (synlig.isEmpty()) "[-----]" else synlig.last().toString()) + " " + usynlig.size + " urørt: " + urørt
+    }
 
 }
 
@@ -184,8 +194,6 @@ class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
 
     fun kanSnus(): Boolean = topp.isEmpty() && bunn.isNotEmpty()
 
-    fun motta(kort: Kort): Spor = Spor(bunn, topp.plus(kort))
-
     fun motta(kort: List<Kort>): Spor = Spor(bunn, topp.plus(kort))
 
     fun flyttTopp(): Spor = Spor(bunn, emptyList())
@@ -205,13 +213,13 @@ class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
 
 enum class TrekkType {
     NULL_TREKK,
-    FRA_SPOR_TIL_MÅL,                // source: spor#    dest: målSpor#
-    FRA_SPOR_TIL_SPOR,               // source: spor#    dest: spor#
-    SNU_KORT_I_SPOR,               // source: spor#    dest:
-    FRA_BUNKE_TIL_SPOR,    // source:          dest: spor#
-    FRA_BUNKE_TIL_MÅL,      // source:         dest: målSpor#
-    TREKK_BUNKE,            // source:         dest:
-    SNU_BUNKE               // source:         dest:
+    FRA_SPOR_TIL_MÅL,
+    FRA_SPOR_TIL_SPOR,
+    SNU_KORT_I_SPOR,
+    FRA_BUNKE_TIL_SPOR,
+    FRA_BUNKE_TIL_MÅL,
+    TREKK_BUNKE,
+    SNU_BUNKE
 }
 
 data class Trekk(val type: TrekkType, val source: Int, val dest: Int) {

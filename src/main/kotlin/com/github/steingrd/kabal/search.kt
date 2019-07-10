@@ -10,9 +10,9 @@ fun finnTrekk(kabal: Kabal): List<Trekk> {
     ).flatten().filter(::erNullTrekk)
 
     return when {
-        trekk.isEmpty() && kabal.bunke.usynlig.isNotEmpty() ->
+        trekk.isEmpty() && kabal.bunke.kanTrekkes() ->
             listOf(Trekk(TrekkType.TREKK_BUNKE, -1, -1))
-        trekk.isEmpty() && kabal.bunke.usynlig.isEmpty() && kabal.bunke.synlig.isNotEmpty() && !kabal.bunke.urørt ->
+        trekk.isEmpty() && kabal.bunke.kanSnus() && !kabal.bunke.urørt ->
             listOf(Trekk(TrekkType.SNU_BUNKE, -1, -1))
         else ->
             trekk
@@ -24,20 +24,18 @@ private fun nullTrekk() = Trekk.NULL_TREKK
 private fun erNullTrekk(it: Trekk) = it != Trekk.NULL_TREKK
 
 private fun finnFraBunkeTilMålTrekk(kabal: Kabal): List<Trekk> {
-    return if (kabal.bunke.synlig.isEmpty()) {
-        emptyList()
-    } else {
-        when {
-            kabal.mål.kanMotta(kabal.bunke.synlig.last()) ->
-                listOf(Trekk(TrekkType.FRA_BUNKE_TIL_MÅL, -1, -1))
-            else ->
-                listOf(nullTrekk())
-        }
+    if (!kabal.bunke.harSynligeKort()) return emptyList()
+
+    return when {
+        kabal.mål.kanMotta(kabal.bunke.øversteKort()) ->
+            listOf(Trekk(TrekkType.FRA_BUNKE_TIL_MÅL, -1, -1))
+        else ->
+            listOf(nullTrekk())
     }
 }
 
 private fun finnFraBunkeTilSporTrekk(kabal: Kabal): List<Trekk> {
-    if (kabal.bunke.synlig.isEmpty()) return emptyList()
+    if (!kabal.bunke.harSynligeKort()) return emptyList()
 
     return kabal.spor.liste.map { e ->
         val spor = e.value

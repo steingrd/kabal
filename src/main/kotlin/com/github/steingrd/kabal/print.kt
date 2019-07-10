@@ -21,7 +21,7 @@ fun skrivTilDisk(kabal: Kabal) {
 fun objectMapper(): ObjectMapper = ObjectMapper().registerModule(KotlinModule())
 
 fun skrivUt(kabal: Kabal) {
-    println("Bunke: " + (if (kabal.bunke.synlig.isEmpty()) "[-----]" else kabal.bunke.synlig.last()) + " " + kabal.bunke.usynlig.size + " urørt: " + kabal.bunke.urørt)
+    println("Bunke: ${kabal.bunke}")
     println()
 
     kabal.mål.målSpor.values.map { l -> if (l.kort.isEmpty()) "------- " else l.kort.last().toString() + " " }.forEach(::print)
