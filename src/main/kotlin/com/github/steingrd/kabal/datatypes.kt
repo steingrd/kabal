@@ -11,10 +11,8 @@ enum class Farge {
 
     fun erMotsattAv(farge: Farge): Boolean {
         return when (farge) {
-            HJERTER -> this == SPAR || this == KLØVER
-            SPAR -> this == HJERTER || this == RUTER
-            RUTER -> this == SPAR || this == KLØVER
-            KLØVER -> this == HJERTER || this == RUTER
+            HJERTER, RUTER -> this == SPAR || this == KLØVER
+            SPAR, KLØVER -> this == HJERTER || this == RUTER
         }
     }
 }
@@ -22,62 +20,11 @@ enum class Farge {
 class Kortstokk {
 
     companion object {
-        val alleKort = listOf(
-                Kort(Farge.HJERTER, 1),
-                Kort(Farge.HJERTER, 2),
-                Kort(Farge.HJERTER, 3),
-                Kort(Farge.HJERTER, 4),
-                Kort(Farge.HJERTER, 5),
-                Kort(Farge.HJERTER, 6),
-                Kort(Farge.HJERTER, 7),
-                Kort(Farge.HJERTER, 8),
-                Kort(Farge.HJERTER, 9),
-                Kort(Farge.HJERTER, 10),
-                Kort(Farge.HJERTER, 11),
-                Kort(Farge.HJERTER, 12),
-                Kort(Farge.HJERTER, 13),
-
-                Kort(Farge.RUTER, 1),
-                Kort(Farge.RUTER, 2),
-                Kort(Farge.RUTER, 3),
-                Kort(Farge.RUTER, 4),
-                Kort(Farge.RUTER, 5),
-                Kort(Farge.RUTER, 6),
-                Kort(Farge.RUTER, 7),
-                Kort(Farge.RUTER, 8),
-                Kort(Farge.RUTER, 9),
-                Kort(Farge.RUTER, 10),
-                Kort(Farge.RUTER, 11),
-                Kort(Farge.RUTER, 12),
-                Kort(Farge.RUTER, 13),
-
-                Kort(Farge.KLØVER, 1),
-                Kort(Farge.KLØVER, 2),
-                Kort(Farge.KLØVER, 3),
-                Kort(Farge.KLØVER, 4),
-                Kort(Farge.KLØVER, 5),
-                Kort(Farge.KLØVER, 6),
-                Kort(Farge.KLØVER, 7),
-                Kort(Farge.KLØVER, 8),
-                Kort(Farge.KLØVER, 9),
-                Kort(Farge.KLØVER, 10),
-                Kort(Farge.KLØVER, 11),
-                Kort(Farge.KLØVER, 12),
-                Kort(Farge.KLØVER, 13),
-
-                Kort(Farge.SPAR, 1),
-                Kort(Farge.SPAR, 2),
-                Kort(Farge.SPAR, 3),
-                Kort(Farge.SPAR, 4),
-                Kort(Farge.SPAR, 5),
-                Kort(Farge.SPAR, 6),
-                Kort(Farge.SPAR, 7),
-                Kort(Farge.SPAR, 8),
-                Kort(Farge.SPAR, 9),
-                Kort(Farge.SPAR, 10),
-                Kort(Farge.SPAR, 11),
-                Kort(Farge.SPAR, 12),
-                Kort(Farge.SPAR, 13))
+        val alleKort = listOf<Kort>()
+                .plus((0 until 13).map { Kort(Farge.HJERTER, it+1) })
+                .plus((0 until 13).map { Kort(Farge.RUTER, it+1) })
+                .plus((0 until 13).map { Kort(Farge.KLØVER, it+1) })
+                .plus((0 until 13).map { Kort(Farge.SPAR, it+1) })
     }
 
 }
@@ -146,7 +93,7 @@ class SporListe(val liste: Map<Int, Spor>) {
 
     fun motta(kort: Kort, tilIndex: Int): SporListe = motta(listOf(kort), tilIndex)
 
-    fun motta(kort: List<Kort>, tilIndex: Int): SporListe {
+    private fun motta(kort: List<Kort>, tilIndex: Int): SporListe {
         val sporetSomMottar = liste[tilIndex] ?: error("Ugyldig index $tilIndex")
         return SporListe(liste.filterKeys { i ->  i != tilIndex }.plus(tilIndex to sporetSomMottar.motta(kort)))
     }
