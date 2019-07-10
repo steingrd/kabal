@@ -3,20 +3,22 @@ package com.github.steingrd.kabal
 import com.github.steingrd.kabal.Farge.*
 
 fun main(args: Array<String>) {
-    var kabal = delUt()
-    skrivTilDisk(kabal)
-    //var kabal = lesFraDisk()
+    spillKabal(skrivTrekk = true)
+}
 
-    skrivUt(kabal)
+fun spillKabal(skrivTrekk: Boolean = false): Boolean {
+    var kabal = delUt()
+
+    if (skrivTrekk) skrivUt(kabal)
 
     var trekk = finnTrekk(kabal)
     var n = 0;
 
     while (trekk.isNotEmpty()) {
         if (trekk.isNotEmpty()) {
-            println("$n: ${trekk[0]}")
+            if (skrivTrekk) println("$n: ${trekk[0]}")
             kabal = kjørTrekk(kabal, trekk[0])
-            skrivUt(kabal)
+            if (skrivTrekk) skrivUt(kabal)
 
             trekk = finnTrekk(kabal)
 
@@ -24,13 +26,15 @@ fun main(args: Array<String>) {
         }
     }
 
-    if (kabal.erFerdig()) {
+    if (skrivTrekk && kabal.erFerdig()) {
         println("+-------------------+")
         println("| Kabalen gikk opp! |")
         println("+-------------------+")
     }
 
-    skrivUt(kabal)
+    if (skrivTrekk) skrivUt(kabal)
+
+    return kabal.erFerdig()
 }
 
 fun delUt(): Kabal {
