@@ -4,12 +4,13 @@ import com.github.steingrd.kabal.TrekkType.*
 
 private val trekkKjørere = mapOf<TrekkType, (Kabal, Trekk)->Kabal>(
         FRA_SPOR_TIL_MÅL to ::fraSporTilMål,
-        FRA_SPOR_TIL_SPOR to ::fraSporTilSpor,
+        FRA_SPOR_TIL_SPOR to ::fraSporTilSporHeleSporet,
         SNU_KORT_I_SPOR to ::snuKortISpor,
         SNU_BUNKE to ::snuBunke,
         TREKK_BUNKE to ::trekkBunke,
         FRA_BUNKE_TIL_SPOR to ::fraBunkeTilSpor,
-        FRA_BUNKE_TIL_MÅL to ::fraBunkeTilMål
+        FRA_BUNKE_TIL_MÅL to ::fraBunkeTilMål,
+        FRA_SPOR_TIL_MÅL_MED_OMVEI to ::fraSporTilMålMedOmvei
 )
 
 fun kjørTrekk(kabal: Kabal, trekk: Trekk): Kabal {
@@ -35,9 +36,12 @@ private fun trekkBunke(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(kabal.mål, kabal.bunke.trekkTreKort(), kabal.spor)
 }
 
-private fun fraSporTilSpor(kabal: Kabal, trekk: Trekk): Kabal {
-    // TODO flytter foreløpig bare fulle topper
+private fun fraSporTilSporHeleSporet(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(kabal.mål, kabal.bunke, kabal.spor.flyttTopp(trekk.source, trekk.dest))
+}
+
+private fun fraSporTilSporNedersteKortet(kabal: Kabal, trekk: Trekk): Kabal {
+    return Kabal(kabal.mål, kabal.bunke, kabal.spor.flyttNedersteITopp(trekk.source, trekk.dest))
 }
 
 private fun fraSporTilMål(kabal: Kabal, trekk: Trekk): Kabal {
@@ -48,3 +52,12 @@ private fun fraSporTilMål(kabal: Kabal, trekk: Trekk): Kabal {
 private fun snuKortISpor(kabal: Kabal, trekk: Trekk): Kabal {
     return Kabal(kabal.mål, kabal.bunke, kabal.spor.snuKortISpor(trekk.source))
 }
+
+private fun fraSporTilMålMedOmvei(kabal: Kabal, trekk: Trekk): Kabal {
+    if (trekk.neste != null)
+        return fraSporTilSporNedersteKortet(kabal, trekk).also { fraSporTilMål( it, trekk.neste) }
+
+    assert(false)
+    return kabal
+}
+

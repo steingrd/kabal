@@ -33,3 +33,20 @@ n=100000
          Gikk opp: 0.16909
     Gikk ikke opp: 0.83091
 
+### Versjon 2
+
+          Kabaler: {true=18584, false=81416}
+         Gikk opp: 0.18584
+    Gikk ikke opp: 0.81416
+    
+          Kabaler: {true=18667, false=81333}
+         Gikk opp: 0.18667
+    Gikk ikke opp: 0.81333
+    
+          Kabaler: {true=18409, false=81591}
+         Gikk opp: 0.18409
+    Gikk ikke opp: 0.81591
+
+          Kabaler: {true=18132, false=81868}
+         Gikk opp: 0.18132
+    Gikk ikke opp: 0.81868

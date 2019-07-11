@@ -6,7 +6,8 @@ fun finnTrekk(kabal: Kabal): List<Trekk> {
             finnFraBunkeTilMålTrekk(kabal),
             finnFraSporTilSporTrekk(kabal),
             finnSnuKortTrekk(kabal),
-            finnFraBunkeTilSporTrekk(kabal)
+            finnFraBunkeTilSporTrekk(kabal),
+            finnFraSporTilMålMedOmveiTrekk(kabal)
     ).flatten().filter(::erNullTrekk)
 
     return when {
@@ -19,9 +20,9 @@ fun finnTrekk(kabal: Kabal): List<Trekk> {
     }
 }
 
-private fun nullTrekk() = Trekk.NULL_TREKK
+private fun nullTrekk() = Trekk(TrekkType.NULL_TREKK, -1, -1)
 
-private fun erNullTrekk(it: Trekk) = it != Trekk.NULL_TREKK
+private fun erNullTrekk(it: Trekk) = it.type != TrekkType.NULL_TREKK
 
 private fun finnFraBunkeTilMålTrekk(kabal: Kabal): List<Trekk> {
     if (!kabal.bunke.harSynligeKort()) return emptyList()
@@ -87,4 +88,32 @@ private fun finnFraSporTilMålTrekk(kabal: Kabal): List<Trekk> {
             nullTrekk()
         }
     }
+}
+
+private fun finnFraSporTilMålMedOmveiTrekk(kabal: Kabal): List<Trekk> {
+    return kabal.spor.liste.filter { it.value.topp.size > 1 }.map {
+        val fraSporIndex = it.key
+        val fraSpor = it.value
+
+        val nedersteKort = fraSpor.topp[fraSpor.topp.size - 1]
+        val nestNedersteKort = fraSpor.topp[fraSpor.topp.size - 2]
+
+        if (kabal.mål.kanMotta(nestNedersteKort)) {
+
+            kabal.spor.liste.map { t ->
+                val tilSporIndex = t.key
+                val tilSpor = t.value
+
+                if (tilSpor.kanMotta(nedersteKort)) {
+                    val nesteTrekk = Trekk(TrekkType.FRA_SPOR_TIL_MÅL, fraSporIndex, -1)
+                    Trekk(TrekkType.FRA_SPOR_TIL_MÅL_MED_OMVEI, fraSporIndex, tilSporIndex, nesteTrekk)
+                } else {
+                    nullTrekk()
+                }
+            }
+
+        } else {
+            listOf(nullTrekk())
+        }
+    }.flatten()
 }
