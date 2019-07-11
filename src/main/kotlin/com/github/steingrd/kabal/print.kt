@@ -31,32 +31,15 @@ fun skrivUt(kabal: Kabal) {
     println()
     println()
 
-    val linjer = mutableListOf<StringBuilder>()
-    kabal.spor.liste.keys.sorted().forEach { skrivUtSpor(linjer, kabal.spor.liste[it] ?: error("Ugyldig index $it")) }
-    linjer.forEach(::println)
+    val maksLinjer = kabal.spor.liste.map { e ->  e.value.topp.size + e.value.bunn.size}.max()
+    val linjer = (0 until maksLinjer!!).map { StringBuilder() }
+    kabal.spor.liste.forEach { (_, spor) -> skrivUtSpor(spor, linjer) }
+    linjer.forEach { println(it) }
 
     println()
 }
 
-fun skrivUtSpor(linjer: MutableList<StringBuilder>, spor: Spor) {
-    // legger til evt nye linjer og padder disse med mellomrom
-    if ((spor.bunn.size + spor.topp.size) > linjer.size) {
-        val nyeLinjer = spor.bunn.size + spor.topp.size - linjer.size
-        (0 until nyeLinjer).forEach { _ ->
-            val sb = StringBuilder("".padStart(if (linjer.isEmpty()) 0 else linjer[0].length, ' '))
-            linjer.add(sb)
-        }
-    } else if (spor.bunn.isEmpty() && spor.topp.isEmpty() && linjer.isEmpty()) {
-        linjer.add(StringBuilder())
-    }
-
-    // skriver ut linjene til linjebufrene
-    linjer.forEachIndexed { i, sb ->
-        when {
-            spor.bunn.isEmpty() && spor.topp.isEmpty() -> sb.append("        ")
-            i < spor.bunn.size -> sb.append("XXXXXXX ")
-            i < (spor.bunn.size + spor.topp.size) -> sb.append(spor.topp[i - spor.bunn.size].toString() + " ")
-            else -> sb.append("        ")
-        }
-    }
+fun skrivUtSpor(spor: Spor, linjer: List<StringBuilder>) {
+    spor.bunn.forEachIndexed { index, _ -> linjer[index].append("XXXXXXX ") }
+    spor.topp.forEachIndexed { index, kort -> linjer[index + spor.bunn.size].append(kort).append(" ") }
 }

@@ -1,5 +1,7 @@
 package com.github.steingrd.kabal
 
+import com.andreapivetta.kolor.black
+import com.andreapivetta.kolor.red
 import kotlin.math.min
 
 enum class Farge {
@@ -13,6 +15,10 @@ enum class Farge {
             HJERTER, RUTER -> this == SPAR || this == KLØVER
             SPAR, KLØVER -> this == HJERTER || this == RUTER
         }
+    }
+
+    fun erRød(): Boolean {
+        return this == HJERTER || this == RUTER;
     }
 }
 
@@ -30,8 +36,10 @@ class Kortstokk {
 
 data class Kort(val farge: Farge, val verdi: Int) {
 
-    override fun toString(): String =
-            "${farge.name.toUpperCase().substring(0, 4)}_${verdi.toString().padStart(2, '0')}"
+    override fun toString(): String {
+        val s = "${farge.name.toUpperCase().substring(0, 4)}_${verdi.toString().padStart(2, '0')}"
+        return if (farge.erRød()) s.red() else s.black()
+    }
 
 }
 
