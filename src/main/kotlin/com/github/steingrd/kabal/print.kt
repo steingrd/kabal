@@ -1,6 +1,7 @@
 package com.github.steingrd.kabal
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
 import java.io.FileReader
@@ -18,7 +19,9 @@ fun skrivTilDisk(kabal: Kabal) {
     }
 }
 
-fun objectMapper(): ObjectMapper = ObjectMapper().registerModule(KotlinModule())
+fun objectMapper(): ObjectMapper = ObjectMapper()
+        .registerModule(KotlinModule())
+        .configure(SerializationFeature.INDENT_OUTPUT, true)
 
 fun skrivUt(kabal: Kabal) {
     println("Bunke: ${kabal.bunke}")
