@@ -2,7 +2,6 @@ package com.github.steingrd.kabal
 
 import kotlin.math.min
 
-
 enum class Farge {
     HJERTER,
     SPAR,
@@ -29,18 +28,18 @@ class Kortstokk {
 
 }
 
-class Kort(val farge: Farge, val verdi: Int) {
+data class Kort(val farge: Farge, val verdi: Int) {
 
     override fun toString(): String =
             "${farge.name.toUpperCase().substring(0, 4)}_${verdi.toString().padStart(2, '0')}"
 
 }
 
-class Kabal(val mål: Mål, val bunke: Bunke, val spor: SporListe) {
+data class Kabal(val mål: Mål, val bunke: Bunke, val spor: SporListe) {
     fun erFerdig(): Boolean = mål.erFerdig()
 }
 
-class Mål(val målSpor: Map<Farge, MålSpor>) {
+data class Mål(val målSpor: Map<Farge, MålSpor>) {
 
     fun kanMotta(k: Kort): Boolean = målSpor.values.any { it.kanMotta(k) }
 
@@ -54,7 +53,7 @@ class Mål(val målSpor: Map<Farge, MålSpor>) {
     fun erFerdig(): Boolean = målSpor.all { e -> e.value.kort.size == 13}
 }
 
-class MålSpor(val farge: Farge, val kort: List<Kort>) {
+data class MålSpor(val farge: Farge, val kort: List<Kort>) {
     fun kanMotta(k: Kort): Boolean =
             farge == k.farge
                     && ((kort.isEmpty() && k.verdi == 1)
@@ -63,7 +62,7 @@ class MålSpor(val farge: Farge, val kort: List<Kort>) {
     fun motta(k: Kort): MålSpor = MålSpor(farge, kort.plus(k))
 }
 
-class Bunke(private val synlig: List<Kort>, private val usynlig: List<Kort>, val urørt: Boolean) {
+data class Bunke(val synlig: List<Kort>, val usynlig: List<Kort>, val urørt: Boolean) {
 
     fun trekkTreKort(): Bunke {
         val treKort = usynlig.takeLast(min(3, usynlig.size))
@@ -93,7 +92,7 @@ class SporListe(val liste: Map<Int, Spor>) {
 
     fun motta(kort: Kort, tilIndex: Int): SporListe = motta(listOf(kort), tilIndex)
 
-    private fun motta(kort: List<Kort>, tilIndex: Int): SporListe {
+    fun motta(kort: List<Kort>, tilIndex: Int): SporListe {
         val sporetSomMottar = liste[tilIndex] ?: error("Ugyldig index $tilIndex")
         return SporListe(liste.filterKeys { i ->  i != tilIndex }.plus(tilIndex to sporetSomMottar.motta(kort)))
     }
