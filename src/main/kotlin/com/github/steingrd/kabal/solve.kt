@@ -54,10 +54,17 @@ private fun snuKortISpor(kabal: Kabal, trekk: Trekk): Kabal {
 }
 
 private fun fraSporTilMålMedOmvei(kabal: Kabal, trekk: Trekk): Kabal {
-    if (trekk.neste != null)
-        return fraSporTilSporNedersteKortet(kabal, trekk).also { fraSporTilMål( it, trekk.neste) }
+    if (trekk.neste == null || trekk.ekstra == null)
+        error("Mangler neste trekk og ekstra informasjon")
 
-    assert(false)
-    return kabal
+    val subspor = kabal.spor.toppFraIndex(trekk.source, trekk.ekstra as Int)
+
+    val sporliste = kabal.spor
+            .flyttToppFraIndex(trekk.source, trekk.ekstra as Int)
+            .motta(subspor, trekk.dest)
+
+    return Kabal(kabal.mål, kabal.bunke, sporliste).also {
+        fraSporTilMål(it, trekk.neste)
+    }
 }
 

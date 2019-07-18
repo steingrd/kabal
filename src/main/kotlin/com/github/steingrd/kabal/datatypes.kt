@@ -143,9 +143,21 @@ class SporListe(val liste: Map<Int, Spor>) {
 
     fun kanMotta(kort: Kort): Boolean = liste.values.any { it.kanMotta(kort) }
 
+    fun sporIndexSomKanMotta(kort: Kort): Int = liste.values.indexOfFirst { it.kanMotta(kort) }
+
+    fun flyttToppFraIndex(sporIndex: Int, index: Int): SporListe {
+        val spor = liste[sporIndex] ?: error("Ugyldig index $sporIndex")
+        return SporListe(liste.filterKeys { i -> i != sporIndex }.plus(sporIndex to spor.flyttToppFraIndex(index)))
+    }
+
+    fun toppFraIndex(sporIndex: Int, index: Int): List<Kort> {
+        val spor = liste[sporIndex] ?: error("Ugyldig index $sporIndex")
+        return spor.topp.subList(index, spor.topp.size);
+    }
+
 }
 
-class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
+data class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
     fun kanMotta(kort: List<Kort>): Boolean = kanMotta(kort[0])
 
     fun kanMotta(kort: Kort): Boolean {
@@ -165,6 +177,8 @@ class Spor(val bunn: List<Kort>, val topp: List<Kort>) {
     fun motta(kort: List<Kort>): Spor = Spor(bunn, topp.plus(kort))
 
     fun flyttTopp(): Spor = Spor(bunn, emptyList())
+
+    fun flyttToppFraIndex(index: Int) = Spor(bunn, topp.subList(0, index))
 
     fun snuØverste(): Spor {
         assert(topp.isEmpty())
@@ -191,7 +205,9 @@ enum class TrekkType {
     SNU_BUNKE
 }
 
-data class Trekk(val type: TrekkType, val source: Int, val dest: Int, val neste: Trekk? = null) {
-
-}
+data class Trekk(val type: TrekkType,
+                 val source: Int,
+                 val dest: Int,
+                 val neste: Trekk? = null,
+                 val ekstra: Any? = null)
 

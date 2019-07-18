@@ -95,25 +95,25 @@ private fun finnFraSporTilMålMedOmveiTrekk(kabal: Kabal): List<Trekk> {
         val fraSporIndex = it.key
         val fraSpor = it.value
 
-        val nedersteKort = fraSpor.topp[fraSpor.topp.size - 1]
-        val nestNedersteKort = fraSpor.topp[fraSpor.topp.size - 2]
+        fraSpor.topp.subList(0, fraSpor.topp.size - 1).mapIndexed { kortIndex, kort ->
+            // hvis dette kortet kan gå til mål, sjekk om kortet nedenfor kan
+            // flyttes til et annet spor
+            val kortetNedenfor = fraSpor.topp[kortIndex + 1]
+            if (kabal.mål.kanMotta(kort) && kabal.spor.kanMotta(kortetNedenfor)) {
+                // dette blir da et to-trinns trekk, først kortetNedenfor -> et annet spor
+                // deretter kort til mål
+                val destTrinn1 = kabal.spor.sporIndexSomKanMotta(kortetNedenfor)
 
-        if (kabal.mål.kanMotta(nestNedersteKort)) {
-
-            kabal.spor.liste.map { t ->
-                val tilSporIndex = t.key
-                val tilSpor = t.value
-
-                if (tilSpor.kanMotta(nedersteKort)) {
-                    val nesteTrekk = Trekk(TrekkType.FRA_SPOR_TIL_MÅL, fraSporIndex, -1)
-                    Trekk(TrekkType.FRA_SPOR_TIL_MÅL_MED_OMVEI, fraSporIndex, tilSporIndex, nesteTrekk)
+                if (fraSporIndex != destTrinn1) {
+                    val trinn2 = Trekk(TrekkType.FRA_SPOR_TIL_MÅL, fraSporIndex, -1)
+                    Trekk(TrekkType.FRA_SPOR_TIL_MÅL_MED_OMVEI, fraSporIndex, destTrinn1, neste = trinn2, ekstra = kortIndex + 1)
                 } else {
                     nullTrekk()
                 }
-            }
 
-        } else {
-            listOf(nullTrekk())
+            } else {
+                nullTrekk()
+            }
         }
     }.flatten()
 }
