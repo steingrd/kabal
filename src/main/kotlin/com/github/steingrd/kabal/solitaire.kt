@@ -8,6 +8,8 @@ fun main(args: Array<String>) {
 
 fun spillKabal(skrivTrekk: Boolean = false): Boolean {
     var kabal = delUt()
+    //skrivTilDisk(kabal)
+    //var kabal = lesFraDisk()
 
     if (skrivTrekk) skrivUt(kabal)
 
@@ -17,12 +19,16 @@ fun spillKabal(skrivTrekk: Boolean = false): Boolean {
     while (trekk.isNotEmpty()) {
         if (trekk.isNotEmpty()) {
             if (skrivTrekk) println("$n: ${trekk[0]}")
+
             kabal = kjørTrekk(kabal, trekk[0])
+
             if (skrivTrekk) skrivUt(kabal)
 
             trekk = finnTrekk(kabal)
 
             n++;
+
+            if (n > 1000) error("Klarte ikke løse på 1000 trekk, noe er galt!")
         }
     }
 

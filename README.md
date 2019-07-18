@@ -4,13 +4,6 @@ Et lite program spiller kabal med seg selv og et script for å kjøre det mange 
 
 ### Versjon 1
 
-n=1000
-
-          Kabaler: {true=1769, false=8231}
-         Gikk opp: 0.1769
-    Gikk ikke opp: 0.8231
-    
-    
 n=100000
 
           Kabaler: {true=16812, false=83188}
@@ -21,7 +14,7 @@ n=100000
          Gikk opp: 0.16919
     Gikk ikke opp: 0.83081
     
-    Kabaler: {true=16853, false=83147}
+          Kabaler: {true=16853, false=83147}
          Gikk opp: 0.16853
     Gikk ikke opp: 0.83147
     
@@ -50,3 +43,10 @@ n=100000
           Kabaler: {true=18132, false=81868}
          Gikk opp: 0.18132
     Gikk ikke opp: 0.81868
+
+
+### Versjon 3
+
+          Kabaler: {true=18505, false=81495}
+         Gikk opp: 0.18505
+    Gikk ikke opp: 0.81495
