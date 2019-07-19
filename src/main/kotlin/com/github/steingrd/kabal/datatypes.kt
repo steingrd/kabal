@@ -34,6 +34,8 @@ class Kortstokk {
 
 }
 
+data class KabalResultat(val gikkOpp: Boolean, val trekk: Int)
+
 data class Kort(val farge: Farge, val verdi: Int) {
 
     override fun toString(): String {

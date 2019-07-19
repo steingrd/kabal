@@ -47,6 +47,20 @@ n=100000
 
 ### Versjon 3
 
+La til "trekk til mål med omvei", dvs finne et kort som kan gå til mål, hvis man flytter kortet nedenfor til et annet spor.
+
           Kabaler: {true=18505, false=81495}
          Gikk opp: 0.18505
     Gikk ikke opp: 0.81495
+    
+           Kabaler: {true=18471, false=81529}
+          Gikk opp: 0.18471
+     Gikk ikke opp: 0.81529
+    -------- Gikk opp -----
+    Gj.snitt trekk: 135.70613393968924
+      Lavest trekk: 107
+      Høyest trekk: 192
+    ---- Gikk ikke opp ----
+    Gj.snitt trekk: 67.96010008708558
+      Lavest trekk: 8
+      Høyest trekk: 171

@@ -3,44 +3,50 @@ package com.github.steingrd.kabal
 import com.github.steingrd.kabal.Farge.*
 
 fun main(args: Array<String>) {
-    spillKabal(skrivTrekk = true)
+    delUtOgSpillKabal(skrivTrekk = true)
 }
 
-fun spillKabal(skrivTrekk: Boolean = false): Boolean {
+fun delUtOgSpillKabal(skrivTrekk: Boolean = false): KabalResultat {
     var kabal = delUt()
     //skrivTilDisk(kabal)
     //var kabal = lesFraDisk()
 
-    if (skrivTrekk) skrivUt(kabal)
+    val resultat = spillKabal(kabal, skrivTrekk)
 
-    var trekk = finnTrekk(kabal)
-    var n = 0;
+    if (skrivTrekk && resultat.gikkOpp) {
+        println("    +-------------------+")
+        println("    | Kabalen gikk opp! |")
+        println("    +-------------------+")
+    }
 
-    while (trekk.isNotEmpty()) {
-        if (trekk.isNotEmpty()) {
-            if (skrivTrekk) println("$n: ${trekk[0]}")
+    return resultat
+}
 
-            kabal = kjørTrekk(kabal, trekk[0])
+private fun spillKabal(initiellKabal: Kabal, skrivTrekk: Boolean): KabalResultat {
+    var kabal = initiellKabal
+    var trekkNummer = 0;
 
-            if (skrivTrekk) skrivUt(kabal)
+    while (!kabal.erFerdig()) {
+        val trekk = finnTrekk(kabal)
 
-            trekk = finnTrekk(kabal)
-
-            n++;
-
-            if (n > 1000) error("Klarte ikke løse på 1000 trekk, noe er galt!")
+        if (trekk.isEmpty()) {
+            return KabalResultat(false, trekkNummer)
         }
+
+        if (skrivTrekk)
+            println("$trekkNummer: ${trekk[0]}")
+
+        kabal = kjørTrekk(kabal, trekk[0])
+
+        if (skrivTrekk)
+            skrivUt(kabal)
+
+        trekkNummer++
+
+        if (trekkNummer > 1000) error("Klarte ikke løse på 1000 trekk, noe er galt!")
     }
 
-    if (skrivTrekk && kabal.erFerdig()) {
-        println("+-------------------+")
-        println("| Kabalen gikk opp! |")
-        println("+-------------------+")
-    }
-
-    if (skrivTrekk) skrivUt(kabal)
-
-    return kabal.erFerdig()
+    return KabalResultat(true, trekkNummer)
 }
 
 fun delUt(): Kabal {
